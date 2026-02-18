@@ -243,7 +243,6 @@ testik/
 - [x] Моніторинг: VictoriaMetrics збирає метрики (spam2000, kubelet, cAdvisor)
 - [x] Дашборди: cluster overview + spam2000 (persistent via ConfigMap sidecar)
 - [x] Безпека: паролі не в репо, окремий deploy user, `.gitignore`
-- [x] Конфігурації як окремі YAML файли (не inline в setup.sh)
 
 ---
 
