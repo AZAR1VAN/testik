@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+*.tgz
+
+# IDE/editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / credentials — NEVER commit
+*.pem
+*.key
+secrets/
+.env
+.env.*
+credentials.txt
+
+# Internal docs — not for repo
+Steps-to-Job/
+
+# Helm
+charts/spam2000/charts/

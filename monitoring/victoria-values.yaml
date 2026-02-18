@@ -1,0 +1,87 @@
+server:
+  retentionPeriod: 7d
+  persistentVolume:
+    enabled: true
+    existingClaim: victoria-metrics-pvc
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+  # Extra args for search limits (spam2000 generates ~12K samples per scrape)
+  extraArgs:
+    search.maxUniqueTimeseries: "5000000"
+    search.maxSeries: "5000000"
+
+  # Inline scrape config — passed directly to VictoriaMetrics via promscrape
+  scrape:
+    enabled: true
+    config:
+      global:
+        scrape_interval: 15s
+
+      scrape_configs:
+        # spam2000 — port 3000
+        - job_name: 'spam2000'
+          static_configs:
+            - targets: ['spam2000.apps.svc.cluster.local:3000']
+          metrics_path: /metrics
+
+        # VictoriaMetrics self-monitoring
+        - job_name: 'victoria-metrics'
+          static_configs:
+            - targets: ['localhost:8428']
+
+        # Kubelet metrics
+        - job_name: 'kubelet'
+          scheme: https
+          tls_config:
+            insecure_skip_verify: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          kubernetes_sd_configs:
+            - role: node
+          relabel_configs:
+            - action: labelmap
+              regex: __meta_kubernetes_node_label_(.+)
+
+        # cAdvisor metrics via kubelet
+        - job_name: 'kubelet-cadvisor'
+          scheme: https
+          metrics_path: /metrics/cadvisor
+          tls_config:
+            insecure_skip_verify: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          kubernetes_sd_configs:
+            - role: node
+          relabel_configs:
+            - action: labelmap
+              regex: __meta_kubernetes_node_label_(.+)
+
+        # Kubernetes pods with prometheus.io/scrape=true annotation
+        - job_name: 'kubernetes-pods'
+          kubernetes_sd_configs:
+            - role: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - source_labels: [__meta_kubernetes_namespace]
+              action: replace
+              target_label: kubernetes_namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              action: replace
+              target_label: kubernetes_pod_name

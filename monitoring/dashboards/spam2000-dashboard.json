@@ -1,0 +1,467 @@
+{
+  "title": "spam2000 Application Metrics",
+  "uid": "spam2000-app",
+  "schemaVersion": 39,
+  "refresh": "10s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "tags": [
+    "application",
+    "spam2000",
+    "custom"
+  ],
+  "timezone": "browser",
+  "panels": [
+    {
+      "id": 100,
+      "type": "row",
+      "title": "\ud83d\udfe2 Application Health",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "collapsed": false
+    },
+    {
+      "id": 1,
+      "title": "App Status",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "up{job=\"spam2000\"}",
+          "legendFormat": "spam2000"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "1": {
+                  "text": "UP",
+                  "color": "green"
+                },
+                "0": {
+                  "text": "DOWN",
+                  "color": "red"
+                }
+              }
+            }
+          ],
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      }
+    },
+    {
+      "id": 2,
+      "title": "Total Unique Series",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "count(random_gauge_1)",
+          "legendFormat": "series"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          }
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      }
+    },
+    {
+      "id": 3,
+      "title": "Scrape Duration",
+      "type": "gauge",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "scrape_duration_seconds{job=\"spam2000\"}",
+          "legendFormat": "duration"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "max": 5,
+          "thresholds": {
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          }
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      }
+    },
+    {
+      "id": 4,
+      "title": "Samples Scraped",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "scrape_samples_scraped{job=\"spam2000\"}",
+          "legendFormat": "samples"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "purple",
+            "mode": "fixed"
+          }
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      }
+    },
+    {
+      "id": 5,
+      "title": "Pod CPU Usage",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{pod=~\"spam2000.*\"}[5m]))",
+          "legendFormat": "CPU"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          }
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      }
+    },
+    {
+      "id": 6,
+      "title": "Pod Memory",
+      "type": "stat",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "sum(container_memory_working_set_bytes{pod=~\"spam2000.*\"})",
+          "legendFormat": "Memory"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "fixedColor": "semi-dark-green",
+            "mode": "fixed"
+          }
+        }
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      }
+    },
+    {
+      "id": 101,
+      "type": "row",
+      "title": "\ud83d\udcc8 Metrics Deep Dive",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "collapsed": false
+    },
+    {
+      "id": 7,
+      "title": "random_gauge_1 by Country (top 10)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "topk(10, sum by (country) (random_gauge_1))",
+          "legendFormat": "{{country}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 15,
+            "lineWidth": 2,
+            "showPoints": "never"
+          }
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      }
+    },
+    {
+      "id": 8,
+      "title": "All Gauges Comparison",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "sum(random_gauge_1)",
+          "legendFormat": "random_gauge_1"
+        },
+        {
+          "expr": "sum(random_gauge_2)",
+          "legendFormat": "random_gauge_2"
+        },
+        {
+          "expr": "sum(random_gauge_3)",
+          "legendFormat": "random_gauge_3"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 20,
+            "lineWidth": 2,
+            "gradientMode": "scheme"
+          }
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      }
+    },
+    {
+      "id": 9,
+      "title": "Scrape Performance Over Time",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "scrape_duration_seconds{job=\"spam2000\"}",
+          "legendFormat": "Scrape Duration (s)"
+        },
+        {
+          "expr": "scrape_samples_scraped{job=\"spam2000\"} / 1000",
+          "legendFormat": "Samples Scraped (\u00f71000)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 10,
+            "lineWidth": 2
+          }
+        }
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      }
+    },
+    {
+      "id": 102,
+      "type": "row",
+      "title": "\ud83d\udd0d Pod Resources",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "collapsed": false
+    },
+    {
+      "id": 10,
+      "title": "spam2000 CPU Usage Over Time",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{pod=~\"spam2000.*\"}[5m]))",
+          "legendFormat": "CPU cores"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "fillOpacity": 20,
+            "lineWidth": 2
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      }
+    },
+    {
+      "id": 11,
+      "title": "spam2000 Memory Usage Over Time",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "sum(container_memory_working_set_bytes{pod=~\"spam2000.*\"})",
+          "legendFormat": "Working Set"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "fillOpacity": 20,
+            "lineWidth": 2
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 28
+      }
+    },
+    {
+      "id": 12,
+      "title": "Cluster Total Network I/O",
+      "description": "Total cluster network traffic (per-pod not available in Minikube cAdvisor)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P4169E866C3094E38"
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(container_network_receive_bytes_total[5m]))",
+          "legendFormat": "Receive"
+        },
+        {
+          "expr": "sum(rate(container_network_transmit_bytes_total[5m]))",
+          "legendFormat": "Transmit"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "custom": {
+            "fillOpacity": 15,
+            "lineWidth": 2
+          }
+        }
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      }
+    }
+  ]
+}

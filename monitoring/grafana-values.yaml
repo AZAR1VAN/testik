@@ -1,0 +1,47 @@
+# ⚠️  Credentials: adminPassword is passed via --set at Helm time (see setup.sh)
+adminUser: admin
+
+# ─── Persistence (explicit PVC with hostPath, see persistent-volumes.yaml) ───
+persistence:
+  enabled: true
+  existingClaim: grafana-pvc
+
+# ─── Datasource ─────────────────────────────────────────────────
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: VictoriaMetrics
+        type: prometheus
+        uid: P4169E866C3094E38
+        url: http://victoria-metrics-victoria-metrics-single-server.monitoring.svc.cluster.local:8428
+        access: proxy
+        isDefault: true
+        jsonData:
+          timeInterval: "15s"
+
+# ─── Dashboard provisioning from ConfigMaps ─────────────────────
+# Dashboards are loaded from ConfigMaps labelled grafana_dashboard=1
+# This survives ArgoCD re-syncs and pod restarts
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    folder: /tmp/dashboards
+    provider:
+      foldersFromFilesStructure: false
+
+# ─── Service ────────────────────────────────────────────────────
+service:
+  type: NodePort
+  nodePort: 30300
+
+# ─── Resources ──────────────────────────────────────────────────
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
