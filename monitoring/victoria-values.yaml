@@ -5,16 +5,19 @@ server:
     existingClaim: victoria-metrics-pvc
   resources:
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: "1"
+      memory: 1Gi
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 250m
+      memory: 512Mi
 
-  # Extra args for search limits (spam2000 generates ~12K samples per scrape)
+  # Extra args for search/query limits (spam2000 generates ~12K samples per scrape)
   extraArgs:
     search.maxUniqueTimeseries: "5000000"
     search.maxSeries: "5000000"
+    search.maxConcurrentRequests: "8"
+    search.maxQueueDuration: "60s"
+    search.maxQueryDuration: "30s"
 
   # Inline scrape config — passed directly to VictoriaMetrics via promscrape
   scrape:
