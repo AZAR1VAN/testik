@@ -175,7 +175,9 @@ git add . && git commit -m "scale: spam2000 back to 1 replica"
 git push
 ```
 
-ArgoCD зменшить кількість подів назад до 1 протягом ~30 секунд.
+ArgoCD синхронізував коміт `f2f5d8d` і зменшив до 1 поду:
+
+![ArgoCD після реверту — 1 под, Synced до f2f5d8d](Screenshots/07-argocd-1-replica-after-revert.png)
 
 ---
 
@@ -191,6 +193,7 @@ ArgoCD зменшить кількість подів назад до 1 прот
 | `04-grafana-cluster-dashboard.png` | Grafana: Kubernetes Cluster Overview — 5 targets, 8 CPU, 15.2 GiB RAM, 20 pods |
 | `05-kubectl-2-replicas.png` | `kubectl get pods -n apps` — 2 Running поди після GitOps масштабування |
 | `06-argocd-2-replicas-synced.png` | ArgoCD: Synced до `0c74056` — 2 поди Running, commit "scale: spam2000 to 2 replicas" |
+| `07-argocd-1-replica-after-revert.png` | ArgoCD: Synced до `f2f5d8d` — 1 под Running після реверту до 1 репліки |
 
 ---
 
