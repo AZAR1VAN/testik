@@ -45,3 +45,13 @@ resources:
   requests:
     cpu: 100m
     memory: 256Mi
+
+# ─── Security / Init fix ────────────────────────────────────────
+# Disable init-chown-data to avoid "Permission denied" on hostPath PVC
+initChownData:
+  enabled: false
+
+securityContext:
+  runAsUser: 472
+  runAsGroup: 472
+  fsGroup: 472
