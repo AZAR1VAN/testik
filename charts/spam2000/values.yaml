@@ -1,5 +1,5 @@
 # ⚠️  GitOps-controlled — changes here trigger ArgoCD sync
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: andriiuni/spam2000

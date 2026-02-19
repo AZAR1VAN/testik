@@ -136,20 +136,61 @@ chmod +x setup.sh cleanup.sh
 
 ##  GitOps демонстрація 🔄 :
 
-ArgoCD слідкує за цим репозиторієм та автоматично застосовує зміни (polling кожні 30 секунд):
-
-```bash
-# Змінити кількість реплік spam2000
-vim charts/spam2000/values.yaml   # replicaCount: 1 → 2
-git add . && git commit -m "scale: spam2000 to 2 replicas"
-git push
-
-# ArgoCD автоматично підхопить зміни протягом ~30 секунд
-kubectl get pods -n apps -w
-```
+ArgoCD слідкує за цим репозиторієм та автоматично застосовує зміни (polling кожні **30 секунд**).
 
 > Через ArgoCD управляється **тільки spam2000** (GitOps).
 > Grafana та VictoriaMetrics — інфраструктура, managed через `setup.sh` / Helm.
+
+### Демо: Scale 1 → 2 → 1 репліки
+
+#### Крок 1: Початковий стан (1 репліка)
+
+Після `./setup.sh` — spam2000 працює з 1 реплікою, ArgoCD: **Synced + Healthy**.
+
+![ArgoCD з 1 реплікою — Synced](Screenshots/02-argocd-1-replica.png)
+
+#### Крок 2: Scale до 2 реплік через `git push`
+
+```bash
+# Змінити replicaCount: 1 → 2 у values.yaml
+vim charts/spam2000/values.yaml
+git add . && git commit -m "scale: spam2000 to 2 replicas"
+git push
+```
+
+ArgoCD автоматично підхопив зміни протягом ~30 секунд і створив другий под:
+
+![kubectl показує 2 Running поди після GitOps sync](Screenshots/05-kubectl-2-replicas.png)
+
+ArgoCD — **Synced** до коміту `0c74056` з повідомленням "*scale: spam2000 to 2 replicas*", обидва поди Running:
+
+![ArgoCD з 2 реплікоми — Synced до коміту 0c74056](Screenshots/06-argocd-2-replicas-synced.png)
+
+#### Крок 3: Повернення до 1 репліки
+
+```bash
+# Змінити replicaCount: 2 → 1
+vim charts/spam2000/values.yaml
+git add . && git commit -m "scale: spam2000 back to 1 replica"
+git push
+```
+
+ArgoCD зменшить кількість подів назад до 1 протягом ~30 секунд.
+
+---
+
+## Скріншоти 📸 :
+
+Всі скріншоти знаходяться у папці `Screenshots/`:
+
+| Файл | Опис |
+|------|------|
+| `01-vmui-resource-usage.png` | VictoriaMetrics VMUI — Per-job CPU, RSS, Disk I/O (victoria-metrics, kubelet) |
+| `02-argocd-1-replica.png` | ArgoCD: spam2000 Synced + Healthy, 1 под Running (commit `325bbbe`) |
+| `03-grafana-spam2000-dashboard.png` | Grafana: spam2000 Application Metrics — UP, 15253 серій, random_gauge_1 по країнах |
+| `04-grafana-cluster-dashboard.png` | Grafana: Kubernetes Cluster Overview — 5 targets, 8 CPU, 15.2 GiB RAM, 20 pods |
+| `05-kubectl-2-replicas.png` | `kubectl get pods -n apps` — 2 Running поди після GitOps масштабування |
+| `06-argocd-2-replicas-synced.png` | ArgoCD: Synced до `0c74056` — 2 поди Running, commit "scale: spam2000 to 2 replicas" |
 
 ---
 
