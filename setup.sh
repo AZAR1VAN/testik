@@ -125,6 +125,8 @@ done
 # ─── 4.5. Persistent Volumes (hostPath) ──────────────────────
 info "=== Step 4.5: Persistent Volumes ==="
 kubectl apply -f "${SCRIPT_DIR}/monitoring/persistent-volumes.yaml"
+# Fix ownership for Grafana hostPath (UID 472 = grafana user)
+minikube ssh 'sudo mkdir -p /data/grafana /data/victoria-metrics && sudo chown -R 472:472 /data/grafana'
 info "PV/PVC created: grafana-pv (1Gi, /data/grafana), victoria-metrics-pv (5Gi, /data/victoria-metrics) ✅"
 
 # ─── 5. Fix CoreDNS for external DNS resolution ──────────────
